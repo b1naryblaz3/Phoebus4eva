@@ -74,6 +74,12 @@ The following optional local verification checks SYS/CAT CMS signatures against 
 .\scripts\Verify-PhoebusTestSignature.ps1 -PackageDirectory . -PythonPath python
 ```
 
+If Windows PowerShell blocks this optional script under its execution policy, review the helper and Python source first. An explicit one-process invocation is shown below; it does not change the saved user/machine execution policy or kernel signing enforcement. Do not use it to run unreviewed scripts or override a managed policy:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Verify-PhoebusTestSignature.ps1 -PackageDirectory . -PythonPath python
+```
+
 Without deliberately trusting the test certificate, Windows/SignTool reporting an untrusted root is expected. It is not a normal Windows trust verification pass. Do not suppress other signing/digest failures.
 
 ## 4. Prepare ONLY the dedicated test Windows installation
