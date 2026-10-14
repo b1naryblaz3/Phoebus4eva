@@ -1,6 +1,6 @@
 # Safety review and reporting
 
-This is an unsigned developer preview. No physical Phoebus playback, kernel runtime, game fix or receiver lock has been validated. It must not be represented as a certified or production-safe driver.
+These are development previews: the original package is unsigned and the separate test package is self-signed. No physical Phoebus playback, kernel runtime, game fix or receiver lock has been validated. Neither is certified or established as production-safe. Read [test installation and recovery](docs/test-install-recovery.md) before considering target changes.
 
 Review buffer/engine ownership, event storage lifetime, IRQL, codec responses, node/format bounds, partial initialization, failure unwind, lock order and concurrent close/power/removal. The modern engine/client-buffer lifetime split and failed event-unregistration recovery need hardware testing. See the README's audit map and known boundaries.
 

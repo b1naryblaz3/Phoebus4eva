@@ -21,12 +21,17 @@
 !/scripts/package-development.py
 !/scripts/verify-release.py
 !/scripts/publication-files.json
+!/scripts/New-PhoebusTestPackage.ps1
+!/scripts/Verify-PhoebusTestSignature.ps1
+!/scripts/verify-test-image.py
+!/scripts/package-testsigned.py
 /docs/*
 !/docs/build-driver.md
 !/docs/driver-package.md
 !/docs/driver-status.md
 !/docs/testing.md
 !/docs/validation.md
+!/docs/test-install-recovery.md
 __pycache__/
 *.pyc
 *.user
