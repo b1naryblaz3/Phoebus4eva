@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0-preview.1",
+  "repository": "b1naryblaz3/Phoebus4eva",
+  "files": [
+    "README.md", "LICENSE", ".gitignore", "SECURITY.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md",
+    "build.ps1", "src/PhoebusProbe.cs",
+    "driver/phoebus.cpp", "driver/phoebus.inf",
+    "driver/include/ph_types.h", "driver/include/ph_hda_spec.h", "driver/include/ph_dma_state.h", "driver/include/ph_position.h",
+    "tests/hda_spec_tests.cpp", "tests/dma_state_tests.cpp", "tests/position_tests.cpp",
+    "scripts/Collect-Phoebus.ps1", "scripts/build-native-driver.ps1", "scripts/setup-native-toolchain.py", "scripts/native-toolchain.lock.json",
+    "scripts/package-development.py", "scripts/verify-release.py", "scripts/publication-files.json",
+    "docs/build-driver.md", "docs/driver-package.md", "docs/driver-status.md", "docs/testing.md", "docs/validation.md",
+    ".github/workflows/build.yml", ".github/workflows/native-driver.yml"
+  ]
+}

@@ -1,0 +1,31 @@
+name: Build experimental Phoebus driver
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Acquire pinned Microsoft build tools
+        shell: powershell
+        run: |
+          python .\scripts\setup-native-toolchain.py
+          if ($LASTEXITCODE -ne 0) { throw 'Toolchain acquisition failed.' }
+          python .\scripts\setup-native-toolchain.py --verify-only
+          if ($LASTEXITCODE -ne 0) { throw 'Toolchain verification failed.' }
+      - name: Test logic, compile kernel source and validate package
+        shell: powershell
+        run: .\scripts\build-native-driver.ps1 -Target All
+      - name: Build read-only diagnostics and package preview assets
+        shell: powershell
+        run: |
+          .\build.ps1
+          python .\scripts\package-development.py --source-commit $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) { throw 'Preview packaging failed.' }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: PhoebusW11-unsigned-experimental
+          path: |
+            dist/releases/*
+          if-no-files-found: error

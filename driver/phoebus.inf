@@ -1,0 +1,161 @@
+; Original experimental Phoebus W11 package metadata. SPDX-License-Identifier: MIT
+; NOT hardware tested, WHQL certified, Microsoft signed, or a vendor release.
+; The DriverVer date is development metadata, not a certification date.
+; This INF alone is not installable: compile PhoebusW11.sys, validate with the
+; WDK, create a fresh catalog, and arrange appropriate signing before deployment.
+; Never reuse the original C-Media catalog. Any file change requires a new catalog.
+; See ../docs/driver-package.md for manual verification and signing requirements.
+
+[Version]
+Signature = "$Windows NT$"
+Class = MEDIA
+ClassGuid = {4D36E96C-E325-11CE-BFC1-08002BE10318}
+Provider = %ProviderName%
+DriverVer = 10/14/2026,0.1.0.0
+CatalogFile = phoebus.cat
+PnpLockDown = 1
+
+[Manufacturer]
+%ProviderName% = PhoebusModels,NTamd64.10.0...22000
+
+[PhoebusModels.NTamd64.10.0...22000]
+%DeviceDescription% = Phoebus,HDAUDIO\FUNC_01&VEN_13F6&DEV_8888&SUBSYS_104384D5
+
+[SourceDisksNames]
+1 = %DiskDescription%
+
+[SourceDisksFiles.amd64]
+PhoebusW11.sys = 1
+
+[DestinationDirs]
+Phoebus.CopyFiles = 13
+
+[Phoebus.CopyFiles]
+PhoebusW11.sys
+
+[Phoebus.NT]
+Include = ks.inf,wdmaudio.inf
+Needs = KS.Registration,WDMAUDIO.Registration
+CopyFiles = Phoebus.CopyFiles
+AddReg = Phoebus.Device.AddReg
+
+[Phoebus.Device.AddReg]
+HKR,,Driver,,PhoebusW11.sys
+HKR,Drivers,SubClasses,,"wave,mixer"
+HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\wave\wdmaud.drv,Description,,%DeviceDescription%
+HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\mixer\wdmaud.drv,Description,,%DeviceDescription%
+
+[Phoebus.NT.Services]
+AddService = PhoebusW11,0x00000002,Phoebus.Service
+
+[Phoebus.Service]
+DisplayName = %ServiceDescription%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %13%\PhoebusW11.sys
+
+[Phoebus.NT.HW]
+AddReg = Phoebus.Hardware.AddReg
+
+[Phoebus.Hardware.AddReg]
+HKR,,DeviceType,0x00010001,0x0000001D
+
+; These names must match PcRegisterSubdevice and the physical connections in
+; the kernel driver. An absent hardware route must not register its subdevices.
+[Phoebus.NT.Interfaces]
+AddInterface = %KSCATEGORY_AUDIO%,eLineOutWave,Phoebus.Speaker.Wave
+AddInterface = %KSCATEGORY_RENDER%,eLineOutWave,Phoebus.Speaker.Wave
+AddInterface = %KSCATEGORY_REALTIME%,eLineOutWave,Phoebus.Speaker.Wave
+AddInterface = %KSCATEGORY_AUDIO%,eLineOutTopo,Phoebus.Speaker.Topology
+AddInterface = %KSCATEGORY_TOPOLOGY%,eLineOutTopo,Phoebus.Speaker.Topology
+AddInterface = %KSCATEGORY_AUDIO%,eHPOutWave,Phoebus.Headphone.Wave
+AddInterface = %KSCATEGORY_RENDER%,eHPOutWave,Phoebus.Headphone.Wave
+AddInterface = %KSCATEGORY_REALTIME%,eHPOutWave,Phoebus.Headphone.Wave
+AddInterface = %KSCATEGORY_AUDIO%,eHPOutTopo,Phoebus.Headphone.Topology
+AddInterface = %KSCATEGORY_TOPOLOGY%,eHPOutTopo,Phoebus.Headphone.Topology
+AddInterface = %KSCATEGORY_AUDIO%,eSpdifOutWave,Phoebus.Spdif.Wave
+AddInterface = %KSCATEGORY_RENDER%,eSpdifOutWave,Phoebus.Spdif.Wave
+AddInterface = %KSCATEGORY_REALTIME%,eSpdifOutWave,Phoebus.Spdif.Wave
+AddInterface = %KSCATEGORY_AUDIO%,eSpdifOutTopo,Phoebus.Spdif.Topology
+AddInterface = %KSCATEGORY_TOPOLOGY%,eSpdifOutTopo,Phoebus.Spdif.Topology
+
+[Phoebus.Speaker.Wave]
+AddReg = Phoebus.Speaker.Wave.AddReg
+
+[Phoebus.Speaker.Wave.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SpeakerWaveName%
+
+[Phoebus.Speaker.Topology]
+AddReg = Phoebus.Speaker.Topology.AddReg,Phoebus.RenderDefaults.AddReg
+
+[Phoebus.Speaker.Topology.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SpeakerTopologyName%
+HKR,"EP\0",%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_SPEAKER%
+
+[Phoebus.Headphone.Wave]
+AddReg = Phoebus.Headphone.Wave.AddReg
+
+[Phoebus.Headphone.Wave.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%HeadphoneWaveName%
+
+[Phoebus.Headphone.Topology]
+AddReg = Phoebus.Headphone.Topology.AddReg,Phoebus.RenderDefaults.AddReg
+
+[Phoebus.Headphone.Topology.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%HeadphoneTopologyName%
+HKR,"EP\0",%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_HEADPHONES%
+
+[Phoebus.Spdif.Wave]
+AddReg = Phoebus.Spdif.Wave.AddReg
+
+[Phoebus.Spdif.Wave.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SpdifWaveName%
+
+[Phoebus.Spdif.Topology]
+AddReg = Phoebus.Spdif.Topology.AddReg,Phoebus.RenderDefaults.AddReg
+
+[Phoebus.Spdif.Topology.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%SpdifTopologyName%
+HKR,"EP\0",%PKEY_AudioEndpoint_Association%,,%KSNODETYPE_SPDIF_INTERFACE%
+
+; HKR here is the individual topology interface, not the device-wide registry.
+; There is one endpoint per topology filter, so every interface uses EP\0.
+; Event-driven mode requires the real WaveRT notification implementation.
+; The 48-byte value below is a serialized VT_BLOB containing WAVEFORMATEXTENSIBLE:
+; stereo PCM, 48000 Hz, 16 valid/container bits, channel mask FL|FR (3).
+; Route discovery must require this baseline format before registering a route.
+[Phoebus.RenderDefaults.AddReg]
+HKR,"EP\0",%PKEY_AudioEndpoint_Supports_EventDriven_Mode%,0x00010001,1
+HKR,"EP\0",%PKEY_AudioEngine_OEMFormat%,0x00000001,41,00,00,00,28,00,00,00,FE,FF,02,00,80,BB,00,00,00,EE,02,00,04,00,10,00,16,00,10,00,03,00,00,00,01,00,00,00,00,00,10,00,80,00,00,AA,00,38,9B,71
+
+[Strings]
+ProviderName = "Phoebus W11 community project"
+DeviceDescription = "ASUS Xonar Phoebus - experimental PCM driver"
+ServiceDescription = "Experimental Phoebus W11 PortCls function driver"
+DiskDescription = "Experimental Phoebus W11 driver package"
+SpeakerWaveName = "Phoebus Speakers (experimental)"
+SpeakerTopologyName = "Phoebus Speakers topology"
+HeadphoneWaveName = "Phoebus Headphones (experimental)"
+HeadphoneTopologyName = "Phoebus Headphones topology"
+SpdifWaveName = "Phoebus S/PDIF PCM (experimental)"
+SpdifTopologyName = "Phoebus S/PDIF topology"
+Proxy.CLSID = "{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_AUDIO = "{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_RENDER = "{65E8773E-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_REALTIME = "{EB115FFC-10C8-4964-831D-6DCB02E6F23F}"
+KSCATEGORY_TOPOLOGY = "{DDA54A40-1E4C-11D1-A050-405705C10000}"
+KSNODETYPE_SPEAKER = "{DFF21CE1-F70F-11D0-B917-00A0C9223196}"
+KSNODETYPE_HEADPHONES = "{DFF21CE2-F70F-11D0-B917-00A0C9223196}"
+KSNODETYPE_SPDIF_INTERFACE = "{DFF21FE5-F70F-11D0-B917-00A0C9223196}"
+PKEY_AudioEndpoint_Association = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},2"
+PKEY_AudioEndpoint_Supports_EventDriven_Mode = "{1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E},7"
+PKEY_AudioEngine_OEMFormat = "{E4870E26-3CC5-4CD2-BA46-CA0A9A70ED04},3"

@@ -1,0 +1,21 @@
+name: Build read-only diagnostics
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Compile from source
+        shell: powershell
+        run: .\build.ps1
+      - name: Check command-line entry point
+        shell: powershell
+        run: |
+          .\dist\PhoebusProbe.exe --help
+          if ($LASTEXITCODE -ne 0) { throw 'Help command failed.' }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: PhoebusProbe-windows-x64
+          path: dist/PhoebusProbe.exe
